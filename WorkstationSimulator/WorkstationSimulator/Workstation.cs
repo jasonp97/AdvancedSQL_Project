@@ -1,29 +1,66 @@
-﻿using System;
+﻿/*
+* FILE: Workstation.cs
+* PROJECT: PROG3070 - Project Milestone 02
+* PROGRAMMERS: TRAN PHUOC NGUYEN LAI, SON PHAM HOANG
+* FIRST VERSION: 12/03/2020
+* DESCRIPTION: This file includes the functionalities that involve in instantiating
+*              a workstation object to hold the appropriate information related to a workstation.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SqlClient;
 
 namespace WorkstationSimulator
 {
     class Workstation
     {
+        private static Configuration config;        // Configuration of this workstation
+        private static int numOfWorkers = 0;        // Number of workers
+        public static int wID { get; set; }         // Workstation ID
+        private static int currentTestTray;         // The current test tray ID
+        private static int positionInTray;          // Indicates the next available position to place into tray
+        public static Materials materialsBins;      // Set of materials bins
         private static string[] employeeType = { "NE", "EE", "VEE" };   //NE: New Employee; EE: Experienced Employee; VEE: Very Experienced Employee
         private static string[] timeScaleDesc = { "1:1", "1:5", "1:10" };
-        private static List<Employee> workersList;
+        private static List<Employee> workersList;          // List of workers
         public static string connectionString = ConfigurationManager.ConnectionStrings["KanbanConnection"].ConnectionString;
-        static void Main(string[] args)
+
+        // FUNCTION NAME : StartWorkstation()
+        // DESCRIPTION: 
+        //		This function instantiates all components in a workstation
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
+        public void StartWorkstation()
         {
-            System.Console.WriteLine("------------------------------ Workstation Simulator ------------------------------");
+            Console.Write("Specify workstation ID: ");
+            wID = Int32.Parse(Console.ReadLine());
+                     
+            System.Console.WriteLine("------------------------------ Workstation {0} Simulator ------------------------------", wID);
             
-            Configuration config = LoadCurrentConfigs();
+            // We need to assign ID for the workstation
 
-            InstantiatingEmployees(config);                                           
+            config = LoadCurrentConfigs();
 
-            System.Console.ReadLine();
+            RegisterWorkstation(config);
+
+            // Initialize test tray
+            currentTestTray = 0;
+            positionInTray = 0;
+            CreateTestTray();
             
+            materialsBins = new Materials(config);
+
+            InstantiatingEmployees(config);
+
+            StartAssemblyLine();
+
+            System.Console.ReadLine();           
         }
 
         // FUNCTION NAME : LoadCurrentConfigs()
@@ -34,7 +71,7 @@ namespace WorkstationSimulator
         // OUTPUTS: 
         //      NONE
         // RETURNS:
-        //	    NONE
+        //	    Configuration
         private static Configuration LoadCurrentConfigs()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
@@ -94,24 +131,206 @@ namespace WorkstationSimulator
             {
                 // New Employees
                 Employee e = new Employee("NE", scale);               
-                e.EmployeeID = e.EmployeeType + i.ToString();
-                workersList.Add(e);
+                e.EmployeeID = wID.ToString() + "NE" + i.ToString();
+                e.RegisterEmployee();
+                workersList.Add(e);               
             }
             for (int i = 1; i <= config.NoOfExperienced; i++)
             {
                 // Experienced Employees
                 Employee e = new Employee("EE", scale);               
-                e.EmployeeID = e.EmployeeType + i.ToString();
-                workersList.Add(e);
+                e.EmployeeID = wID.ToString() + "EE" + i.ToString();
+                e.RegisterEmployee();
+                workersList.Add(e);                
             }
             for (int i = 1; i <= config.NoOfSuper; i++)
             {
                 // Very Experienced Employees
                 Employee e = new Employee("VEE", scale);                
-                e.EmployeeID = e.EmployeeType + i.ToString();
-                workersList.Add(e);
-            }
-            
+                e.EmployeeID = wID.ToString() + "VEE" + i.ToString();
+                e.RegisterEmployee();
+                workersList.Add(e);               
+            }            
         }
+
+        // FUNCTION NAME : GenerateLampNumber()
+        // DESCRIPTION: 
+        //		This function generates LampID
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    String
+        public static string GenerateLampNumber()
+        {
+            string lampNo = "";
+            lampNo += "FL" + currentTestTray.ToString("D6") + positionInTray.ToString("D2");    // FLxxxxxxyy
+            UpdateTray();
+            return lampNo;
+        }
+
+        // FUNCTION NAME : UpdateTray()
+        // DESCRIPTION: 
+        //		This function updates the current tray info
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
+        private static void UpdateTray()
+        {
+            positionInTray++;
+            if (positionInTray > 60)
+            {
+                CreateTestTray();
+            }
+        }
+
+        // FUNCTION NAME : GenerateTestTrayID()
+        // DESCRIPTION: 
+        //		This function generates test tray ID
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    String
+        public static string GenerateTestTrayID()
+        {
+            string testTrayID = "";
+            testTrayID += wID + "FL" + currentTestTray.ToString("D6") + "yy";   // 1FLxxxxxxyy
+            return testTrayID;
+        }
+
+        // FUNCTION NAME : CreateTestTray()
+        // DESCRIPTION: 
+        //		This function creates test tray
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
+        private static void CreateTestTray()
+        {
+            positionInTray = 1;
+            currentTestTray++;
+            string testTrayID = GenerateTestTrayID();
+
+            // Save new tray to database
+            using (SqlConnection conn = new SqlConnection(Workstation.connectionString))
+            {
+                string testTrayUnitNo = "FL" + currentTestTray.ToString("D6") + "yy";
+                string cmdText = $@"INSERT INTO Test_Tray
+                                    VALUES ('{testTrayID}', '{testTrayUnitNo}');";
+
+                SqlCommand cmd = new SqlCommand(cmdText, conn);
+
+                conn.Open();
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+
+                conn.Close();
+            }
+        }
+
+        // FUNCTION NAME : CreateTestTray()
+        // DESCRIPTION: 
+        //		This function saves this workstation to database
+        // INPUTS :
+        //	    Configuration config
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
+        private void RegisterWorkstation(Configuration config)
+        {
+            numOfWorkers = config.NoOfRookie + config.NoOfExperienced + config.NoOfSuper;
+            using (SqlConnection conn = new SqlConnection(Workstation.connectionString))
+            {               
+                string cmdText = $@"INSERT INTO WorkStation
+                                    VALUES ({wID}, {numOfWorkers});";
+
+                SqlCommand cmd = new SqlCommand(cmdText, conn);
+
+                conn.Open();
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+
+                conn.Close();
+            }
+        }
+
+        // FUNCTION NAME : StartAssemblyLine()
+        // DESCRIPTION: 
+        //		This function starts off all workers
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
+        private void StartAssemblyLine()
+        {
+            Console.WriteLine("Workers start working ...");
+            foreach(Employee e in workersList)
+            {
+                e.StartWorking();
+            }
+        }
+
+        // FUNCTION NAME : Refill()
+        // DESCRIPTION: 
+        //		This function refills the almost empty bin with its initial amount of parts
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    Int
+        public static int Refill(string material)
+        {
+            int value = 0;
+            if(material == "Harness")
+            {
+                value = config.HarnessQty; 
+            }
+            else if(material == "Reflector")
+            {
+                value = config.ReflectorQty;
+            }
+            else if(material == "Housing")
+            {
+                value = config.HousingQty;
+            }
+            else if(material == "Lens")
+            {
+                value = config.LensQty;
+            }
+            else if(material == "Bulb")
+            {
+                value = config.BulbQty;
+            }
+            else if (material == "Bezel")
+            {
+                value = config.BezelQty;
+            }
+            return value;
+        } 
+
     }
 }

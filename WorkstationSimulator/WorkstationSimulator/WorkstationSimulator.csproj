@@ -46,6 +46,9 @@
   <ItemGroup>
     <Compile Include="Configuration.cs" />
     <Compile Include="Employee.cs" />
+    <Compile Include="FogLamp.cs" />
+    <Compile Include="Materials.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Workstation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,6 +1,6 @@
 C:\Users\Jason\source\repos\Advanced SQL Project\WorkstationSimulator\WorkstationSimulator\bin\Debug\WorkstationSimulator.exe.config
 C:\Users\Jason\source\repos\Advanced SQL Project\WorkstationSimulator\WorkstationSimulator\bin\Debug\WorkstationSimulator.exe
 C:\Users\Jason\source\repos\Advanced SQL Project\WorkstationSimulator\WorkstationSimulator\bin\Debug\WorkstationSimulator.pdb
+C:\Users\Jason\source\repos\Advanced SQL Project\WorkstationSimulator\WorkstationSimulator\obj\Debug\WorkstationSimulator.csprojAssemblyReference.cache
 C:\Users\Jason\source\repos\Advanced SQL Project\WorkstationSimulator\WorkstationSimulator\obj\Debug\WorkstationSimulator.exe
 C:\Users\Jason\source\repos\Advanced SQL Project\WorkstationSimulator\WorkstationSimulator\obj\Debug\WorkstationSimulator.pdb
-C:\Users\Jason\source\repos\Advanced SQL Project\WorkstationSimulator\WorkstationSimulator\obj\Debug\WorkstationSimulator.csprojAssemblyReference.cache

@@ -1,8 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿/*
+* FILE: Configuration.cs
+* PROJECT: PROG3070 - Project Milestone 02
+* PROGRAMMERS: TRAN PHUOC NGUYEN LAI, SON PHAM HOANG
+* FIRST VERSION: 12/03/2020
+* DESCRIPTION: This file includes the functionalities that involve in modifying
+*              the configuration settings (from the configuration table) for the simulation. 
+*/
+
+using System;
 
 namespace WorkstationSimulator
 {
@@ -25,7 +30,16 @@ namespace WorkstationSimulator
 
         }
 
-        public void showConfig()
+        // FUNCTION NAME : ShowConfig()
+        // DESCRIPTION: 
+        //		This function shows all configuration of the workstation
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
+        public void ShowConfig()
         {
             Console.WriteLine("Harness Quantity: {0}", HarnessQty);
             Console.WriteLine("Reflector Quantity: {0}", ReflectorQty);

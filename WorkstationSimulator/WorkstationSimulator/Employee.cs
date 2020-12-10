@@ -64,6 +64,15 @@ namespace WorkstationSimulator
             timer.Start();
         }
 
+        public void StopWorking()
+        {            
+            timer.Stop();
+        }
+
+        public void ContinueWorking()
+        {
+            timer.Start();
+        }
 
         // FUNCTION NAME : Timer_Elapsed()
         // DESCRIPTION: 
@@ -77,23 +86,38 @@ namespace WorkstationSimulator
         //	    NONE
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            // Use SignalTime.
+            // Uses SignalTime.
             DateTime time = e.SignalTime;
 
-            // Create a fog lamp
+            // Creates a fog lamp
             FogLamp fl = new FogLamp(Workstation.GenerateLampNumber(), Workstation.wID, Workstation.GenerateTestTrayID(), EmployeeID, "Pass");           
             Console.WriteLine("Fog lamp {0} was successfully assembled at: {1}, by {2}, for {3}s", fl.LampNumber , time, EmployeeID, (interval*Timescale)/1000);
            
             fl.SaveToDb();
 
-            // Take parts for the next assembly
-            Workstation.materialsBins.TakeParts();            
-            
-            // Update new interval time for the next fog lamp assemble
-            timer.Stop();
-            GenerateTimeInterval();
-            timer.Interval = interval;
-            timer.Start();
+            // Check material bins to see if there are enough parts to assemble
+            if (!IsBinEmpty())
+            {
+                // Takes parts for the next assembly, and displays to Andon
+                TakeParts();
+
+                // Send data to GUI to display
+                Workstation.materialsBins.DisplayAssemblyStatus();
+
+                // Updates new interval time for the next fog lamp assemble
+                timer.Stop();
+                GenerateTimeInterval();
+                timer.Interval = interval;
+                timer.Start();
+            }
+            else
+            {
+                Console.WriteLine("No more parts, stop ...");
+                // Some bins are empty, notify the workstation to pause the assembly line until bins are refilled
+                Workstation.StopAssemblyLine();
+                // Send data to GUI to display
+                Workstation.materialsBins.DisplayAssemblyStatus();
+            }       
         }
 
         // FUNCTION NAME : GenerateTimeInterval()
@@ -153,6 +177,64 @@ namespace WorkstationSimulator
 
                 conn.Close();
             }
-        }        
+        }
+        
+        private void TakeParts()
+        {
+            // Call procedure to update parts in database
+            using (SqlConnection conn = new SqlConnection(Workstation.connectionString))
+            {
+                string cmdText = $@"EXECUTE Workstation_Modifier {Workstation.wID}, 1";     //Flag 1 for UPDATING workstation (Takes parts and increases number of created lamps)
+
+                SqlCommand cmd = new SqlCommand(cmdText, conn);
+
+                conn.Open();
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+
+                conn.Close();
+            }
+        }
+
+        private bool IsBinEmpty()
+        {
+            bool result = false;
+            using (SqlConnection conn = new SqlConnection(Workstation.connectionString))
+            {
+                string cmdText = $@"DECLARE @TestOutput INT;
+                                    EXECUTE CheckEmptyBin {Workstation.wID}, @TestOutput OUTPUT;
+                                    SELECT @TestOutput";
+
+                SqlCommand cmd = new SqlCommand(cmdText, conn);
+
+                conn.Open();
+                try
+                {                                       
+                    int isEmpty = Convert.ToInt32(cmd.ExecuteScalar());
+                    if(isEmpty == 0)
+                    {
+                        result = false;
+                    }
+                    else
+                    {
+                        result = true;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+
+                conn.Close();
+            }
+            return result;
+        }
     }
 }

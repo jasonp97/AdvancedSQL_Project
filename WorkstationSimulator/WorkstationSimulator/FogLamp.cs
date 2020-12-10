@@ -16,7 +16,7 @@ namespace WorkstationSimulator
     {
         public string LampNumber { get; set; }      //Ex: FL00000101
         public int WorkstationID { get; set; }
-        public string TestUnitNo { get; set; }
+        public string TestUnitNo { get; set; }      //Ex: 1FLxxxxxxyy
         public string WorkerID { get; set; }        // string or int
         public string CompletedStatus { get; set; }
         public FogLamp(string lampNo, int wID, string testTrayID, string workerID, string status)

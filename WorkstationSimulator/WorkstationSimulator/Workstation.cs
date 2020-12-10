@@ -11,13 +11,26 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Net;
+using System.Net.Sockets;
+using System.Timers;
 
 namespace WorkstationSimulator
 {
     class Workstation
     {
-        private static Configuration config;        // Configuration of this workstation
-        private static int numOfWorkers = 0;        // Number of workers
+        // Timer settings
+        private Timer timer;
+
+        public static int workstationStatus;
+
+        //Set up a global socket for the workstation.
+        private static Socket workstationSkt;
+        public static Socket displaySkt;
+        //Set the TcpListener base port is 15000.
+        private const Int32 baseport = 15000;
+
+        private static Configuration config;        // Configuration of this workstation        
         public static int wID { get; set; }         // Workstation ID
         private static int currentTestTray;         // The current test tray ID
         private static int positionInTray;          // Indicates the next available position to place into tray
@@ -38,29 +51,101 @@ namespace WorkstationSimulator
         //	    NONE
         public void StartWorkstation()
         {
+            // We need to assign ID for the workstation
             Console.Write("Specify workstation ID: ");
             wID = Int32.Parse(Console.ReadLine());
                      
             System.Console.WriteLine("------------------------------ Workstation {0} Simulator ------------------------------", wID);
-            
-            // We need to assign ID for the workstation
+
+            // Set up socket connection to Andon display           
+            workstationSkt = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            try
+            {
+                // Set up socket listener for the ground terminal software.                
+                //workstationSkt.Bind(localEPoint);
+
+                int port = baseport + wID;
+                workstationSkt.Bind(new IPEndPoint(IPAddress.Any, port));
+                workstationSkt.Listen(3);
+
+                // Accept incoming connection attempt
+                workstationSkt.BeginAccept(new AsyncCallback(AcceptConnection), null);
+
+            }
+            catch (Exception)
+            {
+                Console.Write("Failed to connect to display!");
+            }
 
             config = LoadCurrentConfigs();
+            RegisterWorkstation();
 
-            RegisterWorkstation(config);
-
-            // Initialize test tray
+            // Initializes test tray
             currentTestTray = 0;
             positionInTray = 0;
             CreateTestTray();
-            
+
+            // Creates materials bins
             materialsBins = new Materials(config);
 
+            // Creates workers
             InstantiatingEmployees(config);
-
+          
+            string keystroke;
+            do
+            {
+                Console.WriteLine("Press Enter to start assembly line ...");
+                keystroke = Console.ReadLine();
+                
+            } while (keystroke.Trim() != "");
+            
             StartAssemblyLine();
+            StartTiming();
 
             System.Console.ReadLine();           
+        }
+
+        private void StartTiming()
+        {
+            int timescale = 1;
+            if(config.TimeScale == timeScaleDesc[0])
+            {
+                timescale = 1;
+            }
+            else if (config.TimeScale == timeScaleDesc[1])
+            {
+                timescale = 5;
+            }
+            else if (config.TimeScale == timeScaleDesc[2])
+            {
+                timescale = 10;
+            }
+            timer = new Timer();
+            timer.Interval = 300000/timescale;  // The runner refills the bins every 5 minutes
+            timer.Elapsed += Timer_Elapsed;
+            timer.Start();
+        }
+
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            // Time is up, the runner picks up all Kanban card and refills the bins
+            Console.WriteLine("Time to refill!");
+            Refill();
+            
+            // Check if the assembly line is paused, then reactive it
+            if(workstationStatus == 0)
+            {
+                workstationStatus = 1;
+                ContinueAssemblyLine();
+            }
+        }
+
+        private static void AcceptConnection(IAsyncResult status_result)
+        {
+            // Assigns the displaySkt to the received socket from the display
+            displaySkt = workstationSkt.EndAccept(status_result);
+
         }
 
         // FUNCTION NAME : LoadCurrentConfigs()
@@ -115,7 +200,7 @@ namespace WorkstationSimulator
         //      NONE
         // RETURNS:
         //	    NONE
-        private static void InstantiatingEmployees(Configuration config)
+        private void InstantiatingEmployees(Configuration config)
         {
             workersList = new List<Employee>();
             int scale;
@@ -167,7 +252,7 @@ namespace WorkstationSimulator
             string lampNo = "";
             lampNo += "FL" + currentTestTray.ToString("D6") + positionInTray.ToString("D2");    // FLxxxxxxyy
             UpdateTray();
-            return lampNo;
+            return lampNo;           
         }
 
         // FUNCTION NAME : UpdateTray()
@@ -251,15 +336,14 @@ namespace WorkstationSimulator
         //      NONE
         // RETURNS:
         //	    NONE
-        private void RegisterWorkstation(Configuration config)
+        private void RegisterWorkstation()
         {
-            numOfWorkers = config.NoOfRookie + config.NoOfExperienced + config.NoOfSuper;
             using (SqlConnection conn = new SqlConnection(Workstation.connectionString))
-            {               
-                string cmdText = $@"INSERT INTO WorkStation
-                                    VALUES ({wID}, {numOfWorkers});";
+            {
+                string cmdText = $@"EXECUTE Workstation_Modifier {wID}, 0";     //Flag 0 for CREATING workstation
 
                 SqlCommand cmd = new SqlCommand(cmdText, conn);
+                
 
                 conn.Open();
                 try
@@ -286,10 +370,28 @@ namespace WorkstationSimulator
         //	    NONE
         private void StartAssemblyLine()
         {
+            workstationStatus = 1;  // Active status
             Console.WriteLine("Workers start working ...");
             foreach(Employee e in workersList)
             {
                 e.StartWorking();
+            }
+        }
+
+        public static void StopAssemblyLine()
+        {
+            workstationStatus = 0;  // Paused status
+            foreach (Employee e in workersList)
+            {
+                e.StopWorking();
+            }           
+        }
+
+        private void ContinueAssemblyLine()
+        {
+            foreach (Employee e in workersList)
+            {
+                e.ContinueWorking();
             }
         }
 
@@ -302,35 +404,24 @@ namespace WorkstationSimulator
         //      NONE
         // RETURNS:
         //	    Int
-        public static int Refill(string material)
+        public static void Refill()
         {
-            int value = 0;
-            if(material == "Harness")
+            using(SqlConnection conn = new SqlConnection(connectionString))
             {
-                value = config.HarnessQty; 
-            }
-            else if(material == "Reflector")
-            {
-                value = config.ReflectorQty;
-            }
-            else if(material == "Housing")
-            {
-                value = config.HousingQty;
-            }
-            else if(material == "Lens")
-            {
-                value = config.LensQty;
-            }
-            else if(material == "Bulb")
-            {
-                value = config.BulbQty;
-            }
-            else if (material == "Bezel")
-            {
-                value = config.BezelQty;
-            }
-            return value;
-        } 
+                string cmdText = $@"EXECUTE Materials_Refill {wID}";     // Procedure to refill the needed bins
 
+                SqlCommand cmd = new SqlCommand(cmdText, conn);
+                conn.Open();
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+                conn.Close();
+            }
+        } 
     }
 }

@@ -9,6 +9,8 @@
 */
 
 using System;
+using System.Data.SqlClient;
+using System.Text;
 
 namespace WorkstationSimulator
 {
@@ -60,12 +62,12 @@ namespace WorkstationSimulator
             currentLens -= 1;
             currentBulb -= 1;
             currentBezel -= 1;
-            CheckParts();
+            //CheckParts();
         }
 
         // FUNCTION NAME : ShowParts()
         // DESCRIPTION: 
-        //		This function shows all parts available
+        //		This function shows all parts available (in console app)
         // INPUTS :
         //	    NONE
         // OUTPUTS: 
@@ -82,6 +84,85 @@ namespace WorkstationSimulator
             Console.WriteLine("Bezel bin: {0}", currentBezel);
         }
 
+        // FUNCTION NAME : ShowPartsUI()
+        // DESCRIPTION: 
+        //		This function shows all parts available (in GUI app)
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
+        public void DisplayAssemblyStatus()
+        {
+            byte[] data = PacketBuilder();
+            Workstation.displaySkt.Send(data);
+        }
+
+        private byte[] PacketBuilder()
+        {
+            ReadPartsCount();   // Update new parts count
+            string packetString = "";
+            packetString += currentHarness.ToString() +
+                            "|" +
+                            currentReflector.ToString() +
+                            "|" +
+                            currentHousing.ToString() +
+                            "|" +
+                            currentLens.ToString() +
+                            "|" +
+                            currentBulb.ToString() +
+                            "|" +
+                            currentBezel.ToString() +
+                            "|" +
+                            Workstation.workstationStatus.ToString();
+            return Encoding.ASCII.GetBytes(packetString);
+        }
+
+        private void ReadPartsCount()
+        {
+            // Read part count
+            using (SqlConnection conn = new SqlConnection(Workstation.connectionString))
+            {
+                string cmdText = $@"SELECT HarnessQty, ReflectorQty, HousingQty, LensQty, BulbQty, BezelQty
+                                    FROM WorkStation
+                                    WHERE WorkStationID = {Workstation.wID}";
+                
+                SqlCommand cmd = new SqlCommand(cmdText, conn);
+
+                conn.Open();
+                try
+                {
+                    SqlDataReader rd = cmd.ExecuteReader();
+                    if (rd.HasRows)
+                    {
+                        // Read all the retrieved records
+                        while (rd.Read())
+                        {
+                            currentHarness = Convert.ToInt32(rd["HarnessQty"]);
+                            currentReflector = Convert.ToInt32(rd["ReflectorQty"]);
+                            currentHousing = Convert.ToInt32(rd["HousingQty"]);
+                            currentLens = Convert.ToInt32(rd["LensQty"]);
+                            currentBulb = Convert.ToInt32(rd["BulbQty"]);
+                            currentBezel = Convert.ToInt32(rd["BezelQty"]);
+                        }
+                    }
+                    else
+                    {
+                        // Display error if no record found
+                        Console.WriteLine("No Data Found!");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Cannot read parts count from database!");
+                }
+
+                conn.Close();
+            }
+        }
+
+
         // FUNCTION NAME : CheckParts()
         // DESCRIPTION: 
         //		This function raises alert if any part amount is less than 5 
@@ -91,39 +172,39 @@ namespace WorkstationSimulator
         //      NONE
         // RETURNS:
         //	    NONE
-        private void CheckParts()
-        {
-            if(currentHarness <= ALERT_LEVEL)
-            {
-                Console.WriteLine("Harness card is removed");
-                currentHarness += Workstation.Refill("Harness");
-            }
-            if(currentReflector <= ALERT_LEVEL)
-            {
-                Console.WriteLine("Reflector card is removed");
-                currentReflector += Workstation.Refill("Reflector");
-            }
-            if(currentHousing <= ALERT_LEVEL)
-            {
-                Console.WriteLine("Housing card is removed");
-                currentHousing += Workstation.Refill("Housing");
-            }
-            if (currentLens <= ALERT_LEVEL)
-            {
-                Console.WriteLine("Lens card is removed");
-                currentLens += Workstation.Refill("Lens");
-            }
-            if (currentBulb <= ALERT_LEVEL)
-            {
-                Console.WriteLine("Bulb card is removed");
-                currentBulb += Workstation.Refill("Bulb");
-            }
-            if (currentBezel <= ALERT_LEVEL)
-            {
-                Console.WriteLine("Bezel card is removed");
-                currentBezel += Workstation.Refill("Bezel");
-            }
-        }
+        //private void CheckParts()
+        //{
+        //    if(currentHarness <= ALERT_LEVEL)
+        //    {
+        //        Console.WriteLine("Harness card is removed");
+        //        currentHarness += Workstation.Refill("Harness");
+        //    }
+        //    if(currentReflector <= ALERT_LEVEL)
+        //    {
+        //        Console.WriteLine("Reflector card is removed");
+        //        currentReflector += Workstation.Refill("Reflector");
+        //    }
+        //    if(currentHousing <= ALERT_LEVEL)
+        //    {
+        //        Console.WriteLine("Housing card is removed");
+        //        currentHousing += Workstation.Refill("Housing");
+        //    }
+        //    if (currentLens <= ALERT_LEVEL)
+        //    {
+        //        Console.WriteLine("Lens card is removed");
+        //        currentLens += Workstation.Refill("Lens");
+        //    }
+        //    if (currentBulb <= ALERT_LEVEL)
+        //    {
+        //        Console.WriteLine("Bulb card is removed");
+        //        currentBulb += Workstation.Refill("Bulb");
+        //    }
+        //    if (currentBezel <= ALERT_LEVEL)
+        //    {
+        //        Console.WriteLine("Bezel card is removed");
+        //        currentBezel += Workstation.Refill("Bezel");
+        //    }
+        //}
         
     }
 }

@@ -1,0 +1,14 @@
+C:\Users\Jason\source\repos\Advanced SQL Project\ConfigurationTool\ConfigurationTool\bin\Debug\ConfigurationTool.exe.config
+C:\Users\Jason\source\repos\Advanced SQL Project\ConfigurationTool\ConfigurationTool\bin\Debug\ConfigurationTool.exe
+C:\Users\Jason\source\repos\Advanced SQL Project\ConfigurationTool\ConfigurationTool\bin\Debug\ConfigurationTool.pdb
+C:\Users\Jason\source\repos\Advanced SQL Project\ConfigurationTool\ConfigurationTool\obj\Debug\ConfigurationTool.csprojAssemblyReference.cache
+C:\Users\Jason\source\repos\Advanced SQL Project\ConfigurationTool\ConfigurationTool\obj\Debug\MainWindow.g.cs
+C:\Users\Jason\source\repos\Advanced SQL Project\ConfigurationTool\ConfigurationTool\obj\Debug\App.g.cs
+C:\Users\Jason\source\repos\Advanced SQL Project\ConfigurationTool\ConfigurationTool\obj\Debug\ConfigurationTool_MarkupCompile.cache
+C:\Users\Jason\source\repos\Advanced SQL Project\ConfigurationTool\ConfigurationTool\obj\Debug\ConfigurationTool_MarkupCompile.lref
+C:\Users\Jason\source\repos\Advanced SQL Project\ConfigurationTool\ConfigurationTool\obj\Debug\MainWindow.baml
+C:\Users\Jason\source\repos\Advanced SQL Project\ConfigurationTool\ConfigurationTool\obj\Debug\ConfigurationTool.g.resources
+C:\Users\Jason\source\repos\Advanced SQL Project\ConfigurationTool\ConfigurationTool\obj\Debug\ConfigurationTool.Properties.Resources.resources
+C:\Users\Jason\source\repos\Advanced SQL Project\ConfigurationTool\ConfigurationTool\obj\Debug\ConfigurationTool.csproj.GenerateResource.cache
+C:\Users\Jason\source\repos\Advanced SQL Project\ConfigurationTool\ConfigurationTool\obj\Debug\ConfigurationTool.exe
+C:\Users\Jason\source\repos\Advanced SQL Project\ConfigurationTool\ConfigurationTool\obj\Debug\ConfigurationTool.pdb

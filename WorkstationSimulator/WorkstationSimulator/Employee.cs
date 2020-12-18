@@ -1,6 +1,6 @@
 ﻿/*
 * FILE: Employee.cs
-* PROJECT: PROG3070 - Project Milestone 02
+* PROJECT: PROG3070 - Final Project
 * PROGRAMMERS: TRAN PHUOC NGUYEN LAI, SON PHAM HOANG
 * FIRST VERSION: 12/03/2020
 * DESCRIPTION: This file includes the functionalities that involve in instanting
@@ -64,11 +64,29 @@ namespace WorkstationSimulator
             timer.Start();
         }
 
+        // FUNCTION NAME : StopWorking()
+        // DESCRIPTION: 
+        //		This function stops the timer within a worker
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
         public void StopWorking()
         {            
             timer.Stop();
         }
 
+        // FUNCTION NAME : ContinueWorking()
+        // DESCRIPTION: 
+        //		This function starts the stopped timer within a worker
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
         public void ContinueWorking()
         {
             timer.Start();
@@ -90,7 +108,7 @@ namespace WorkstationSimulator
             DateTime time = e.SignalTime;
 
             // Creates a fog lamp
-            FogLamp fl = new FogLamp(Workstation.GenerateLampNumber(), Workstation.wID, Workstation.GenerateTestTrayID(), EmployeeID, "Pass");           
+            FogLamp fl = new FogLamp(Workstation.GenerateLampNumber(), Workstation.wID, Workstation.GenerateTestTrayID(), EmployeeID, passedFailedMaker());           
             Console.WriteLine("Fog lamp {0} was successfully assembled at: {1}, by {2}, for {3}s", fl.LampNumber , time, EmployeeID, (interval*Timescale)/1000);
            
             fl.SaveToDb();
@@ -100,10 +118,7 @@ namespace WorkstationSimulator
             {
                 // Takes parts for the next assembly, and displays to Andon
                 TakeParts();
-
-                // Send data to GUI to display
-                Workstation.materialsBins.DisplayAssemblyStatus();
-
+                
                 // Updates new interval time for the next fog lamp assemble
                 timer.Stop();
                 GenerateTimeInterval();
@@ -113,11 +128,13 @@ namespace WorkstationSimulator
             else
             {
                 Console.WriteLine("No more parts, stop ...");
+
                 // Some bins are empty, notify the workstation to pause the assembly line until bins are refilled
-                Workstation.StopAssemblyLine();
-                // Send data to GUI to display
-                Workstation.materialsBins.DisplayAssemblyStatus();
-            }       
+                Workstation.StopAssemblyLine();               
+            }
+
+            // Send data to GUI to display
+            Workstation.materialsBins.DisplayAssemblyStatus();
         }
 
         // FUNCTION NAME : GenerateTimeInterval()
@@ -158,8 +175,7 @@ namespace WorkstationSimulator
         public void RegisterEmployee()
         {
             using (SqlConnection conn = new SqlConnection(Workstation.connectionString))
-            {
-                
+            {               
                 string cmdText = $@"INSERT INTO Worker
                                     VALUES ('{EmployeeID}', {WorkstationID} , '{EmployeeType}');";
 
@@ -178,7 +194,16 @@ namespace WorkstationSimulator
                 conn.Close();
             }
         }
-        
+
+        // FUNCTION NAME : TakeParts()
+        // DESCRIPTION: 
+        //		This function takes a part in each bin to assemble
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
         private void TakeParts()
         {
             // Call procedure to update parts in database
@@ -202,6 +227,15 @@ namespace WorkstationSimulator
             }
         }
 
+        // FUNCTION NAME : IsBinEmpty()
+        // DESCRIPTION: 
+        //		This function checks if any bin is empty
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    bool
         private bool IsBinEmpty()
         {
             bool result = false;
@@ -235,6 +269,59 @@ namespace WorkstationSimulator
                 conn.Close();
             }
             return result;
+        }
+
+        // FUNCTION NAME : passedFailedMaker()
+        // DESCRIPTION: 
+        //		This function decides if a lamp is passed or failed
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    string
+        private string passedFailedMaker()
+        {
+            Random rnd = new Random();
+            int randQuality = rnd.Next(1, 101);     // Generate a random number from 1 to 100
+            string lampQuality = "";
+            if(EmployeeType == "New Employee")
+            {
+                // Most likely to be failed (0.85 %)                
+                if(randQuality <= 85)
+                {
+                    lampQuality = "Failed";
+                }
+                else
+                {
+                    lampQuality = "Passed";
+                }               
+            }
+            else if (EmployeeType == "Experienced Employee")
+            {
+                // Average rate to be failed (0.5 %)
+                if (randQuality <= 50)
+                {
+                    lampQuality = "Failed";
+                }
+                else
+                {
+                    lampQuality = "Passed";
+                }
+            }
+            else
+            {
+                // Least likely to be failed (0.15 %)
+                if (randQuality <= 15)
+                {
+                    lampQuality = "Failed";
+                }
+                else
+                {
+                    lampQuality = "Passed";
+                }
+            }
+            return lampQuality;
         }
     }
 }

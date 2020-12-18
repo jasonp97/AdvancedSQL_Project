@@ -1,10 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/*
+* FILE: Workstation.cs
+* PROJECT: PROG3070 - Final Project
+* PROGRAMMERS: TRAN PHUOC NGUYEN LAI, SON PHAM HOANG
+* FIRST VERSION: 12/17/2020
+* DESCRIPTION: This file includes the attributes of a workstation. This class
+*               will contain all information received from the workstation
+*/
+
 using System.ComponentModel;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace WorkstationAndon

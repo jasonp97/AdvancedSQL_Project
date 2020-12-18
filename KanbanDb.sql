@@ -1,6 +1,6 @@
 /*
 * FILE: KanbanDb.sql
-* PROJECT: PROG3070 - Project Milestone 02
+* PROJECT: PROG3070 - Final Project
 * PROGRAMMERS: TRAN PHUOC NGUYEN LAI, SON PHAM HOANG
 * FIRST VERSION: 12/03/2020
 * DESCRIPTION: This file includes the sql script for the creation of
@@ -35,7 +35,8 @@ CREATE TABLE Configuration (
 	TestTrayQty int NOT NULL,
 	NoOfRookie int NOT NULL,
 	NoOfExperienced int NOT NULL,
-	NoOfSuper int NOT NULL
+	NoOfSuper int NOT NULL,
+	OrderQty int NOT NULL
 );
 
 -- 1
@@ -47,7 +48,8 @@ CREATE TABLE WorkStation (
 	LensQty INT NOT NULL,
 	BulbQty INT NOT NULL,
 	BezelQty INT NOT NULL,
-	LampQty INT NOT NULL
+	LampQty INT NOT NULL,
+	WorkstationStatus INT NOt NULL
 );
 
 -- 2
@@ -79,8 +81,7 @@ CREATE TABLE Test_Lamp (
 
 
 INSERT INTO Configuration
-VALUES (1, 55, 35, 24, 40, 60, 75, 0, 3, 60, 1, 2, 1);
-
+VALUES (1, 55, 35, 24, 40, 60, 75, 1, 3, 60, 1, 2, 1, 1000);
 
 ----------------------------------------------- Stored Procedure ------------------------------------------------------
 
@@ -112,7 +113,7 @@ BEGIN
 				SELECT @Bezel = BezelQty FROM Configuration WHERE ConfigID = 1
 
 				INSERT INTO WorkStation
-				VALUES(@StationID, @Harness, @Reflector, @Housing, @Lens, @Bulb, @Bezel, 0); 
+				VALUES(@StationID, @Harness, @Reflector, @Housing, @Lens, @Bulb, @Bezel, 0, 0); 
 			END
 		ELSE -- Update bins' capacities
 			BEGIN
@@ -274,31 +275,20 @@ SELECT * FROM Worker
 SELECT * FROM Test_Lamp
 SELECT * FROM Test_Tray
 
-EXECUTE Workstation_Modifier 1, 0
-EXECUTE Workstation_Modifier 1, 1
-EXECUTE Workstation_Modifier 2, 0
-EXECUTE Workstation_Modifier 1, 1
 
+---------------------------------------------------- View -------------------------------------------------------------
 
-INSERT INTO WorkStation
-VALUES(3, 5, 4, 3, 2, 1, 0, 7);
-
-UPDATE WorkStation
-SET  HousingQty = 1
-WHERE WorkStationID = 3;
-
-EXECUTE Materials_Refill 3
-
-
-INSERT INTO WorkStation
-VALUES(4, 0, 4, 3, 2, 1, 7, 7);
-
-DECLARE @TestOutput INT;
-EXECUTE CheckEmptyBin 1, @TestOutput OUTPUT;
-PRINT @TestOutput
-
-
-SELECT CONVERT (VARCHAR(50), SYSDATETIME())  
-SELECT SYSDATETIME()  
+IF EXISTS (SELECT * FROM sys.views WHERE name = 'Get_Quantity')
+	DROP VIEW Get_Quantity
+GO
+CREATE OR ALTER VIEW [Get_Quantity]
+AS
+SELECT WorkStationID, LampQty, OrderQty, COUNT(case CompletedStatus when 'Passed' then 1 else null end) AS NumPassed, 
+COUNT(case CompletedStatus when 'Failed' then 1 else null end) AS NumFailed,
+ROUND(CAST(COUNT(case CompletedStatus when 'Passed' then 1 else null end) AS FLOAT) / CAST(LampQty AS FLOAT),2) AS Yield, WorkstationStatus
+FROM WorkStation
+JOIN Configuration ON ConfigID = 1
+JOIN Test_Lamp ON Test_Lamp.Workstation = WorkStation.WorkStationID
+GROUP BY Workstation.WorkStationID, LampQty, OrderQty, WorkstationStatus;
 
 

@@ -1,6 +1,6 @@
 ﻿/*
 * FILE: Materials.cs
-* PROJECT: PROG3070 - Project Milestone 02
+* PROJECT: PROG3070 - Final Project
 * PROGRAMMERS: TRAN PHUOC NGUYEN LAI, SON PHAM HOANG
 * FIRST VERSION: 12/03/2020
 * DESCRIPTION: This file includes the functionalities that involve in instanting
@@ -84,7 +84,7 @@ namespace WorkstationSimulator
             Console.WriteLine("Bezel bin: {0}", currentBezel);
         }
 
-        // FUNCTION NAME : ShowPartsUI()
+        // FUNCTION NAME : DisplayAssemblyStatus()
         // DESCRIPTION: 
         //		This function shows all parts available (in GUI app)
         // INPUTS :
@@ -96,9 +96,20 @@ namespace WorkstationSimulator
         public void DisplayAssemblyStatus()
         {
             byte[] data = PacketBuilder();
+
+            // Send data packet to Andon display
             Workstation.displaySkt.Send(data);
         }
 
+        // FUNCTION NAME : PacketBuilder()
+        // DESCRIPTION: 
+        //		This function contructs a data packet of the workstation to send to Andon Display
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    byte[]
         private byte[] PacketBuilder()
         {
             ReadPartsCount();   // Update new parts count
@@ -119,6 +130,15 @@ namespace WorkstationSimulator
             return Encoding.ASCII.GetBytes(packetString);
         }
 
+        // FUNCTION NAME : ReadPartsCount()
+        // DESCRIPTION: 
+        //		This function reads the part counts in all the material bins
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    byte[]
         private void ReadPartsCount()
         {
             // Read part count
@@ -161,50 +181,6 @@ namespace WorkstationSimulator
                 conn.Close();
             }
         }
-
-
-        // FUNCTION NAME : CheckParts()
-        // DESCRIPTION: 
-        //		This function raises alert if any part amount is less than 5 
-        // INPUTS :
-        //	    NONE
-        // OUTPUTS: 
-        //      NONE
-        // RETURNS:
-        //	    NONE
-        //private void CheckParts()
-        //{
-        //    if(currentHarness <= ALERT_LEVEL)
-        //    {
-        //        Console.WriteLine("Harness card is removed");
-        //        currentHarness += Workstation.Refill("Harness");
-        //    }
-        //    if(currentReflector <= ALERT_LEVEL)
-        //    {
-        //        Console.WriteLine("Reflector card is removed");
-        //        currentReflector += Workstation.Refill("Reflector");
-        //    }
-        //    if(currentHousing <= ALERT_LEVEL)
-        //    {
-        //        Console.WriteLine("Housing card is removed");
-        //        currentHousing += Workstation.Refill("Housing");
-        //    }
-        //    if (currentLens <= ALERT_LEVEL)
-        //    {
-        //        Console.WriteLine("Lens card is removed");
-        //        currentLens += Workstation.Refill("Lens");
-        //    }
-        //    if (currentBulb <= ALERT_LEVEL)
-        //    {
-        //        Console.WriteLine("Bulb card is removed");
-        //        currentBulb += Workstation.Refill("Bulb");
-        //    }
-        //    if (currentBezel <= ALERT_LEVEL)
-        //    {
-        //        Console.WriteLine("Bezel card is removed");
-        //        currentBezel += Workstation.Refill("Bezel");
-        //    }
-        //}
-        
+                
     }
 }

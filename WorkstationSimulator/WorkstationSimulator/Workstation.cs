@@ -1,6 +1,6 @@
 ﻿/*
 * FILE: Workstation.cs
-* PROJECT: PROG3070 - Project Milestone 02
+* PROJECT: PROG3070 - Final Project
 * PROGRAMMERS: TRAN PHUOC NGUYEN LAI, SON PHAM HOANG
 * FIRST VERSION: 12/03/2020
 * DESCRIPTION: This file includes the functionalities that involve in instantiating
@@ -22,11 +22,12 @@ namespace WorkstationSimulator
         // Timer settings
         private Timer timer;
 
-        public static int workstationStatus;
+        public static int workstationStatus = 0;    // Workstation status (Paused or Active)
 
         //Set up a global socket for the workstation.
         private static Socket workstationSkt;
         public static Socket displaySkt;
+
         //Set the TcpListener base port is 15000.
         private const Int32 baseport = 15000;
 
@@ -106,6 +107,15 @@ namespace WorkstationSimulator
             System.Console.ReadLine();           
         }
 
+        // FUNCTION NAME : StartTiming()
+        // DESCRIPTION: 
+        //		This function starts the timers
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
         private void StartTiming()
         {
             int timescale = 1;
@@ -127,6 +137,15 @@ namespace WorkstationSimulator
             timer.Start();
         }
 
+        // FUNCTION NAME : Timer_Elapsed()
+        // DESCRIPTION: 
+        //		This function is triggered each time the timer is due
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             // Time is up, the runner picks up all Kanban card and refills the bins
@@ -137,10 +156,20 @@ namespace WorkstationSimulator
             if(workstationStatus == 0)
             {
                 workstationStatus = 1;
+                UpdateWorkstaionStatus(workstationStatus);
                 ContinueAssemblyLine();
             }
         }
 
+        // FUNCTION NAME : AcceptConnection()
+        // DESCRIPTION: 
+        //		This function accepts the incoming connection to Andon display
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
         private static void AcceptConnection(IAsyncResult status_result)
         {
             // Assigns the displaySkt to the received socket from the display
@@ -338,7 +367,7 @@ namespace WorkstationSimulator
         //	    NONE
         private void RegisterWorkstation()
         {
-            using (SqlConnection conn = new SqlConnection(Workstation.connectionString))
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string cmdText = $@"EXECUTE Workstation_Modifier {wID}, 0";     //Flag 0 for CREATING workstation
 
@@ -371,6 +400,7 @@ namespace WorkstationSimulator
         private void StartAssemblyLine()
         {
             workstationStatus = 1;  // Active status
+            UpdateWorkstaionStatus(workstationStatus);
             Console.WriteLine("Workers start working ...");
             foreach(Employee e in workersList)
             {
@@ -378,15 +408,65 @@ namespace WorkstationSimulator
             }
         }
 
+        // FUNCTION NAME : stopAssemblyLine()
+        // DESCRIPTION: 
+        //		This function stops assembly line
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
         public static void StopAssemblyLine()
         {
             workstationStatus = 0;  // Paused status
+            UpdateWorkstaionStatus(workstationStatus);
             foreach (Employee e in workersList)
             {
                 e.StopWorking();
             }           
         }
 
+        // FUNCTION NAME : UpdateWorkstaionStatus()
+        // DESCRIPTION: 
+        //		This function updates workstation status (Active or Paused)
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
+        private static void UpdateWorkstaionStatus(int status)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string cmdTxt = $@"UPDATE WorkStation
+                                   SET WorkstationStatus = {status}
+                                   WHERE WorkStationID = {wID}";
+                SqlCommand cmd = new SqlCommand(cmdTxt, conn);
+                conn.Open();
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                catch
+                {
+                    Console.WriteLine("Failed to update status");
+                }
+
+                conn.Close();
+            }
+        }
+
+        // FUNCTION NAME : ContinueAssemblyLine()
+        // DESCRIPTION: 
+        //		This function continues the stopped assembly line
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
         private void ContinueAssemblyLine()
         {
             foreach (Employee e in workersList)

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WorkstationAndon"
         mc:Ignorable="d"
         xmlns:model="clr-namespace:WorkstationAndon"
-        Title="Workstation Andon" Height="600" Width="900" ResizeMode="NoResize">
+        Title="Workstation Andon" Height="400" Width="900" ResizeMode="NoResize">
 
     <Grid Background="#FFE0E0E0">
         <Grid.ColumnDefinitions>

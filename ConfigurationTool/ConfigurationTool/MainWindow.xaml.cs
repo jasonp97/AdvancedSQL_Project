@@ -1,6 +1,6 @@
 ﻿/*
 * FILE: MainWindow.xaml.cs
-* PROJECT: PROG3070 - Project Milestone 01
+* PROJECT: PROG3070 - Final Project
 * PROGRAMMERS: TRAN PHUOC NGUYEN LAI, SON PHAM HOANG
 * FIRST VERSION: 11/13/2020
 * DESCRIPTION: This file includes a function that connects to the 
@@ -63,7 +63,7 @@ namespace ConfigurationTool
                 const string updateQuery = @"UPDATE Configuration
                                             SET HarnessQty=@Harness,ReflectorQty=@Reflector,HousingQty=@Housing,LensQty=@Lens,BulbQty=@Bulb,BezelQty=@Bezel,
                                             TimeScale=@TimeScale,AssemblyStationQty=@AssemblyStation,TestTrayQty=@TestTray,NoOfRookie=@NoOfRookie,
-                                            NoOfExperienced=@NoOfExperience,NoOfSuper=@NoOfSuper
+                                            NoOfExperienced=@NoOfExperience,NoOfSuper=@NoOfSuper,OrderQty=@OrderQty
                                             WHERE ConfigID=1;";
 
                 // Sql command for updating the configuration table
@@ -80,11 +80,11 @@ namespace ConfigurationTool
                 updateCmd.Parameters.AddWithValue("@NoOfRookie", NewWorkers.Text);
                 updateCmd.Parameters.AddWithValue("@NoOfExperience", ExperiencedWorkers.Text);
                 updateCmd.Parameters.AddWithValue("@NoOfSuper", SuperExpWorkers.Text);
+                updateCmd.Parameters.AddWithValue("@OrderQty", OrderQty.Text);
 
                 try
                 {
                     // Open connection to database and execute updating command.
-
                     conn.Open
                     ();
                     updateCmd.ExecuteNonQuery();
@@ -92,9 +92,7 @@ namespace ConfigurationTool
                 }
                 catch (Exception ex)
                 {
-
-                    MessageBox.Show
-                    (ex.ToString());
+                    MessageBox.Show(ex.ToString());
                 }
             }
         }
@@ -129,9 +127,7 @@ namespace ConfigurationTool
 
                 return configsList;
             }
-
         }
-
 
         // FUNCTION NAME : DataTableToIntList()
         // DESCRIPTION: 
@@ -164,6 +160,7 @@ namespace ConfigurationTool
                 configsList.Add(Convert.ToInt32(row["NoOfRookie"]));
                 configsList.Add(Convert.ToInt32(row["NoOfExperienced"]));
                 configsList.Add(Convert.ToInt32(row["NoOfSuper"]));
+                configsList.Add(Convert.ToInt32(row["OrderQty"]));
             }
             return configsList;
         }
@@ -208,8 +205,18 @@ namespace ConfigurationTool
             NewWorkers.Text = listOfConfigs[10].ToString();
             ExperiencedWorkers.Text = listOfConfigs[11].ToString();
             SuperExpWorkers.Text = listOfConfigs[12].ToString();
+            OrderQty.Text = listOfConfigs[13].ToString();
         }
 
+        // FUNCTION NAME : Save_Click()
+        // DESCRIPTION: 
+        //		This function saves the current config to the database
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             UpdateConfig(connectionString);
@@ -217,6 +224,15 @@ namespace ConfigurationTool
             this.Close();
         }
 
+        // FUNCTION NAME : Cancel_Click()
+        // DESCRIPTION: 
+        //		This function cancels the current config
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             this.Close();

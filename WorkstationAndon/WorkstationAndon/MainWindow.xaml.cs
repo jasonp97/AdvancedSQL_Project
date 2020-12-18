@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿/*
+* FILE: MainWindow.xaml.cs
+* PROJECT: PROG3070 - Final Project
+* PROGRAMMERS: TRAN PHUOC NGUYEN LAI, SON PHAM HOANG
+* FIRST VERSION: 12/17/2020
+* DESCRIPTION: This file includes the functionalities that involve in instantiating
+*              an Andon display that shows the connected workstation information
+*/
+
+using System;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Net.Sockets;
 using System.Net;
 
@@ -38,6 +38,15 @@ namespace WorkstationAndon
             
         }
 
+        // FUNCTION NAME : BtnConnect_Click()
+        // DESCRIPTION: 
+        //		This function connects the Andon to the desired workstation
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
         private async void BtnConnect_Click(object sender, RoutedEventArgs e)
         {
             wIP = workstationIP.Text;
@@ -47,6 +56,15 @@ namespace WorkstationAndon
             await Task.Run(() => ConnectToWorkstation(wIP));
         }
 
+        // FUNCTION NAME : ConnectToWorkstation()
+        // DESCRIPTION: 
+        //		This function connects the Andon to the desired workstation
+        // INPUTS :
+        //	    workstation_IP: string
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
         private void ConnectToWorkstation(string workstation_IP)
         {
             try
@@ -79,6 +97,15 @@ namespace WorkstationAndon
             }
         }
 
+        // FUNCTION NAME : ReceiveData()
+        // DESCRIPTION: 
+        //		This function receives the incoming data from the workstation
+        // INPUTS :
+        //	    NONE
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
         private static void ReceiveData(IAsyncResult status_result)
         {
             try
@@ -98,13 +125,22 @@ namespace WorkstationAndon
             }
             catch (Exception e)
             {
-                MessageBox.Show("Client is closed");
+                MessageBox.Show("Workstation is closed");
 
                 ClientSocket.Shutdown(SocketShutdown.Both);
                 ClientSocket.Close();                
             }
         }
 
+        // FUNCTION NAME : DisplayData()
+        // DESCRIPTION: 
+        //		This function displays the incoming data from the workstation
+        // INPUTS :
+        //	    data: string
+        // OUTPUTS: 
+        //      NONE
+        // RETURNS:
+        //	    NONE
         private static void DisplayData(string data)
         {
             // Parse raw data into meaningfil data 
@@ -192,6 +228,5 @@ namespace WorkstationAndon
                 workstation.BgColorBezel = Brushes.Transparent;
             }
         }
-
     }
 }

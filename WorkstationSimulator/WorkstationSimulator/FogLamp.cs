@@ -1,6 +1,6 @@
 ﻿/*
 * FILE: FogLamp.cs
-* PROJECT: PROG3070 - Project Milestone 02
+* PROJECT: PROG3070 - Final Project
 * PROGRAMMERS: TRAN PHUOC NGUYEN LAI, SON PHAM HOANG
 * FIRST VERSION: 12/03/2020
 * DESCRIPTION: This file includes the functionalities that involve in instantiating

@@ -16,12 +16,12 @@
             <RowDefinition Height="0.25*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
+
         <!-- Workstation 1 -->
         <Label Name="w1_Label" Grid.Column="0" Grid.Row="0" Content="{Binding Path=WorkstationLabel, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,0" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="25"/>
         <Label Name="w1_status_Label" Grid.Column="0" Grid.Row="0" Content="{Binding Path=WorkstationStatus, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,0" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="25"/>
         <Rectangle Name="w1_statusLight" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Margin="10,10,0,0" Stroke="Black" Width="30" Fill="{Binding BgColorStatus, UpdateSourceTrigger=PropertyChanged}"/>
-        
+
         <Grid Grid.Column="0" Grid.Row="1" Margin="10,10,10,10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -34,21 +34,61 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            
-            <Border Grid.Column="0" Grid.Row="0" BorderBrush="Black" BorderThickness="1" Grid.RowSpan="5" Grid.ColumnSpan="2"/>
-            
-            <Label Grid.Column="0" Grid.Row="0" Content="Order Target" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20"/>
-            <Label Name="w1_order" Grid.Column="1" Grid.Row="0" Content="{Binding Path=OrderTarget, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"/>
 
+            <Border Grid.Column="0" Grid.Row="0" BorderBrush="Black" BorderThickness="1" Grid.RowSpan="5" Grid.ColumnSpan="2"/>
+
+            <Rectangle Grid.Row="0" Grid.ColumnSpan="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="Black" Offset="0"/>
+                        <GradientStop Color="#FF665CFD" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Label Grid.Column="0" Grid.Row="0" Content="Order Target" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Foreground="White"/>
+            <Label Name="w1_order" Grid.Column="1" Grid.Row="0" Content="{Binding Path=OrderTarget, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Foreground="White"/>
+
+            <Rectangle Grid.Row="1" Grid.ColumnSpan="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFFCFCFC" Offset="0"/>
+                        <GradientStop Color="#FFF1E000" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
             <Label Grid.Column="0" Grid.Row="1" Content="Produced" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20"/>
             <Label Name="w1_produced" Grid.Column="1" Grid.Row="1" Content="{Binding Path=Produced, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"/>
 
+            <Rectangle Grid.Row="2" Grid.ColumnSpan="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="White" Offset="0"/>
+                        <GradientStop Color="#FF00AE01" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
             <Label Grid.Column="0" Grid.Row="2" Content="Passed" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20"/>
             <Label Name="w1_passed" Grid.Column="1" Grid.Row="2" Content="{Binding Path=Passed, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"/>
 
-            <Label Grid.Column="0" Grid.Row="3" Content="Failed" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20"/>
-            <Label Name="w1_failed" Grid.Column="1" Grid.Row="3" Content="{Binding Path=Failed, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"/>
+            <Rectangle Grid.Row="3" Grid.ColumnSpan="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                        <GradientStop Color="Black" Offset="0"/>
+                        <GradientStop Color="#FFFF5151" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Label Grid.Column="0" Grid.Row="3" Content="Failed" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Foreground="White"/>
+            <Label Name="w1_failed" Grid.Column="1" Grid.Row="3" Content="{Binding Path=Failed, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Foreground="White"/>
 
+            <Rectangle Grid.Row="4" Grid.ColumnSpan="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                        <GradientStop Color="#FF1D578E" Offset="0"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
             <Label Grid.Column="0" Grid.Row="4" Content="Yield" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20"/>
             <Label Name="w1_yield" Grid.Column="1" Grid.Row="4" Content="{Binding Path=Yield, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"/>
         </Grid>
@@ -73,18 +113,58 @@
 
             <Border Grid.Column="0" Grid.Row="0" BorderBrush="Black" BorderThickness="1" Grid.RowSpan="5" Grid.ColumnSpan="2"/>
 
-            <Label Grid.Column="0" Grid.Row="0" Content="Order Target" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20"/>
-            <Label Name="w2_order" Grid.Column="1" Grid.Row="0" Content="{Binding Path=OrderTarget, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"/>
+            <Rectangle Grid.Row="0" Grid.ColumnSpan="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="Black" Offset="0"/>
+                        <GradientStop Color="#FF665CFD" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Label Grid.Column="0" Grid.Row="0" Content="Order Target" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Foreground="White"/>
+            <Label Name="w2_order" Grid.Column="1" Grid.Row="0" Content="{Binding Path=OrderTarget, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Foreground="White"/>
 
+            <Rectangle Grid.Row="1" Grid.ColumnSpan="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFFCFCFC" Offset="0"/>
+                        <GradientStop Color="#FFF1E000" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
             <Label Grid.Column="0" Grid.Row="1" Content="Produced" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20"/>
             <Label Name="w2_produced" Grid.Column="1" Grid.Row="1" Content="{Binding Path=Produced, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"/>
 
+            <Rectangle Grid.Row="2" Grid.ColumnSpan="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="White" Offset="0"/>
+                        <GradientStop Color="#FF00AE01" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
             <Label Grid.Column="0" Grid.Row="2" Content="Passed" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20"/>
             <Label Name="w2_passed" Grid.Column="1" Grid.Row="2" Content="{Binding Path=Passed, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"/>
 
-            <Label Grid.Column="0" Grid.Row="3" Content="Failed" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20"/>
-            <Label Name="w2_failed" Grid.Column="1" Grid.Row="3" Content="{Binding Path=Failed, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"/>
+            <Rectangle Grid.Row="3" Grid.ColumnSpan="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                        <GradientStop Color="Black" Offset="0"/>
+                        <GradientStop Color="#FFFF5151" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Label Grid.Column="0" Grid.Row="3" Content="Failed" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Foreground="White"/>
+            <Label Name="w2_failed" Grid.Column="1" Grid.Row="3" Content="{Binding Path=Failed, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Foreground="White"/>
 
+            <Rectangle Grid.Row="4" Grid.ColumnSpan="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                        <GradientStop Color="#FF1D578E" Offset="0"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
             <Label Grid.Column="0" Grid.Row="4" Content="Yield" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20"/>
             <Label Name="w2_yield" Grid.Column="1" Grid.Row="4" Content="{Binding Path=Yield, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"/>
         </Grid>
@@ -109,18 +189,58 @@
 
             <Border Grid.Column="0" Grid.Row="0" BorderBrush="Black" BorderThickness="1" Grid.RowSpan="5" Grid.ColumnSpan="2"/>
 
-            <Label Grid.Column="0" Grid.Row="0" Content="Order Target" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20"/>
-            <Label Name="w3_order" Grid.Column="1" Grid.Row="0" Content="{Binding Path=OrderTarget, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"/>
+            <Rectangle Grid.Row="0" Grid.ColumnSpan="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="Black" Offset="0"/>
+                        <GradientStop Color="#FF665CFD" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Label Grid.Column="0" Grid.Row="0" Content="Order Target" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Foreground="White"/>
+            <Label Name="w3_order" Grid.Column="1" Grid.Row="0" Content="{Binding Path=OrderTarget, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Foreground="White"/>
 
+            <Rectangle Grid.Row="1" Grid.ColumnSpan="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFFCFCFC" Offset="0"/>
+                        <GradientStop Color="#FFF1E000" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
             <Label Grid.Column="0" Grid.Row="1" Content="Produced" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20"/>
             <Label Name="w3_produced" Grid.Column="1" Grid.Row="1" Content="{Binding Path=Produced, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"/>
 
+            <Rectangle Grid.Row="2" Grid.ColumnSpan="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="White" Offset="0"/>
+                        <GradientStop Color="#FF00AE01" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
             <Label Grid.Column="0" Grid.Row="2" Content="Passed" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20"/>
             <Label Name="w3_passed" Grid.Column="1" Grid.Row="2" Content="{Binding Path=Passed, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"/>
 
-            <Label Grid.Column="0" Grid.Row="3" Content="Failed" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20"/>
-            <Label Name="w3_failed" Grid.Column="1" Grid.Row="3" Content="{Binding Path=Failed, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"/>
+            <Rectangle Grid.Row="3" Grid.ColumnSpan="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                        <GradientStop Color="Black" Offset="0"/>
+                        <GradientStop Color="#FFFF5151" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Label Grid.Column="0" Grid.Row="3" Content="Failed" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Foreground="White"/>
+            <Label Name="w3_failed" Grid.Column="1" Grid.Row="3" Content="{Binding Path=Failed, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Foreground="White"/>
 
+            <Rectangle Grid.Row="4" Grid.ColumnSpan="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                        <GradientStop Color="#FF1D578E" Offset="0"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
             <Label Grid.Column="0" Grid.Row="4" Content="Yield" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20"/>
             <Label Name="w3_yield" Grid.Column="1" Grid.Row="4" Content="{Binding Path=Yield, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"/>
         </Grid>

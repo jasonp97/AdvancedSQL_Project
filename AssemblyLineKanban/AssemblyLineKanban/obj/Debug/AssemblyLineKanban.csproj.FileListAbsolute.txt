@@ -1,0 +1,14 @@
+C:\Users\Jason\source\repos\Advanced SQL Project\AssemblyLineKanban\AssemblyLineKanban\bin\Debug\AssemblyLineKanban.exe.config
+C:\Users\Jason\source\repos\Advanced SQL Project\AssemblyLineKanban\AssemblyLineKanban\bin\Debug\AssemblyLineKanban.exe
+C:\Users\Jason\source\repos\Advanced SQL Project\AssemblyLineKanban\AssemblyLineKanban\bin\Debug\AssemblyLineKanban.pdb
+C:\Users\Jason\source\repos\Advanced SQL Project\AssemblyLineKanban\AssemblyLineKanban\obj\Debug\AssemblyLineKanban.csprojAssemblyReference.cache
+C:\Users\Jason\source\repos\Advanced SQL Project\AssemblyLineKanban\AssemblyLineKanban\obj\Debug\MainWindow.g.cs
+C:\Users\Jason\source\repos\Advanced SQL Project\AssemblyLineKanban\AssemblyLineKanban\obj\Debug\App.g.cs
+C:\Users\Jason\source\repos\Advanced SQL Project\AssemblyLineKanban\AssemblyLineKanban\obj\Debug\AssemblyLineKanban_MarkupCompile.cache
+C:\Users\Jason\source\repos\Advanced SQL Project\AssemblyLineKanban\AssemblyLineKanban\obj\Debug\AssemblyLineKanban_MarkupCompile.lref
+C:\Users\Jason\source\repos\Advanced SQL Project\AssemblyLineKanban\AssemblyLineKanban\obj\Debug\MainWindow.baml
+C:\Users\Jason\source\repos\Advanced SQL Project\AssemblyLineKanban\AssemblyLineKanban\obj\Debug\AssemblyLineKanban.g.resources
+C:\Users\Jason\source\repos\Advanced SQL Project\AssemblyLineKanban\AssemblyLineKanban\obj\Debug\AssemblyLineKanban.Properties.Resources.resources
+C:\Users\Jason\source\repos\Advanced SQL Project\AssemblyLineKanban\AssemblyLineKanban\obj\Debug\AssemblyLineKanban.csproj.GenerateResource.cache
+C:\Users\Jason\source\repos\Advanced SQL Project\AssemblyLineKanban\AssemblyLineKanban\obj\Debug\AssemblyLineKanban.exe
+C:\Users\Jason\source\repos\Advanced SQL Project\AssemblyLineKanban\AssemblyLineKanban\obj\Debug\AssemblyLineKanban.pdb
